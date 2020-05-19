@@ -6,9 +6,11 @@ path_w_csv = "output.csv"
 path_w_txt = "output.txt"
 fieldnames_w_1 = ['ding_id', 'flow']
 fieldnames_w_2 = ['ding_id']
+fieldnames_w_3 = ['ding_id', 'flow', 'user_ids']
+fieldnames_w_4 = ['ding_id', 'flow', 'no_key']
 
 
-def csv_dict_reader(path, fieldnames):
+def csv_dict_reader(path):
     """
     Read a CSV file using csv.DictReader
     """
@@ -17,12 +19,7 @@ def csv_dict_reader(path, fieldnames):
         data = []
         for line in reader:
             json_line = json.loads(line["json"])
-            data_str = "{"
-            for i in range(0, len(fieldnames)):
-                data_str = data_str + '"'+fieldnames[i]+'": "'+json_line[fieldnames[i]]+'",'
-            data_str = data_str[:-1] + '}'
-            data_dict = json.loads(data_str)
-            data.append(data_dict)
+            data.append(json_line)
     return data
 
 
@@ -31,7 +28,8 @@ def csv_dict_writer(path, fieldnames, data):
     Writes a CSV file using DictWriter
     """
     with open(path, "w", newline='') as out_file:
-        writer = csv.DictWriter(out_file, delimiter=',', fieldnames=fieldnames)
+        writer = csv.DictWriter(out_file, delimiter=',', fieldnames=fieldnames, restval='no value for key',
+                                extrasaction='ignore')
         writer.writeheader()
         for row in data:
             writer.writerow(row)
@@ -45,11 +43,15 @@ def txt_writer(path, fieldnames, data):
         for row in data:
             data_str = ""
             for i in range(0, len(fieldnames)):
-                data_str = data_str + fieldnames[i] + ' = ' + row[fieldnames[i]] + ', '
+                key = row.get(fieldnames[i])
+                if key:
+                    data_str = data_str + fieldnames[i] + ' = ' + str(row[fieldnames[i]]) + ', '
+                else:
+                    data_str = data_str + fieldnames[i] + ' = no value for key, '
             data_str = data_str[:-2]
             out.write(data_str + ' \n')
 
 
-my_list = csv_dict_reader(path=path_r, fieldnames=fieldnames_w_1)
+my_list = csv_dict_reader(path=path_r)
 csv_dict_writer(path=path_w_csv, fieldnames=fieldnames_w_1, data=my_list)
 txt_writer(path=path_w_txt, fieldnames=fieldnames_w_2, data=my_list)
