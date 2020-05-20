@@ -6,9 +6,8 @@ path_w_csv = "output.csv"
 path_w_txt = "output.txt"
 fieldnames_w_1 = ['ding_id', 'flow']
 fieldnames_w_2 = ['ding_id']
-fieldnames_w_3 = ['ding_id', 'flow', 'user_ids']
-fieldnames_w_4 = ['ding_id', 'flow', 'no_key']
-
+fieldnames_w_3 = 'all'
+fieldnames_w_4 = ['ding_id', 'flow', 'user_ids', 'dt', 'no_key']
 
 def csv_dict_reader(path):
     """
@@ -19,14 +18,26 @@ def csv_dict_reader(path):
         data = []
         for line in reader:
             json_line = json.loads(line["json"])
+            json_line["dt"] = line["dt"]
             data.append(json_line)
     return data
+
+
+def get_all_keys(list_dicts):
+    list_key =[]
+    for i in range(0, len(list_dicts)):
+        for dict_i in list_dicts[i]:
+            if dict_i not in list_key:
+                list_key.append(dict_i)
+    return list_key
 
 
 def csv_dict_writer(path, fieldnames, data):
     """
     Writes a CSV file using DictWriter
     """
+    if fieldnames == 'all':
+        fieldnames = get_all_keys(data)
     with open(path, "w", newline='') as out_file:
         writer = csv.DictWriter(out_file, delimiter=',', fieldnames=fieldnames, restval='no value for key',
                                 extrasaction='ignore')
@@ -39,6 +50,8 @@ def txt_writer(path, fieldnames, data):
     """
     Writes a TXT file
     """
+    if fieldnames == 'all':
+        fieldnames = get_all_keys(data)
     with open(path, "w") as out:
         for row in data:
             data_str = ""
