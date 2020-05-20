@@ -9,6 +9,7 @@ fieldnames_w_2 = ['ding_id']
 fieldnames_w_3 = 'all'
 fieldnames_w_4 = ['ding_id', 'flow', 'user_ids', 'dt', 'no_key']
 
+
 def csv_dict_reader(path):
     """
     Read a CSV file using csv.DictReader
@@ -24,7 +25,7 @@ def csv_dict_reader(path):
 
 
 def get_all_keys(list_dicts):
-    list_key =[]
+    list_key = []
     for i in range(0, len(list_dicts)):
         for dict_i in list_dicts[i]:
             if dict_i not in list_key:
