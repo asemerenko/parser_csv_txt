@@ -13,6 +13,7 @@ fieldnames_w_4 = ['ding_id', 'flow', 'user_ids', 'dt', 'no_key']
 def csv_dict_reader(path):
     """
     Read a CSV file using csv.DictReader
+    Create data (list of dictionaries) : [{'key': 'value'}]
     """
     with open(path) as f_obj:
         reader = csv.DictReader(f_obj, delimiter=',')
@@ -21,10 +22,15 @@ def csv_dict_reader(path):
             json_line = json.loads(line["json"])
             json_line["dt"] = line["dt"]
             data.append(json_line)
+    print(data)
     return data
 
 
 def get_all_keys(list_dicts):
+    """
+    Get all keys from list of dictionaries
+    Create keys' list
+    """
     list_key = []
     for i in range(0, len(list_dicts)):
         for dict_i in list_dicts[i]:
@@ -58,6 +64,7 @@ def txt_writer(path, fieldnames, data):
             data_str = ""
             for i in range(0, len(fieldnames)):
                 key = row.get(fieldnames[i])
+                # Handle KeyError Exceptions
                 if key:
                     data_str = data_str + fieldnames[i] + ' = ' + str(row[fieldnames[i]]) + ', '
                 else:
