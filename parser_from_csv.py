@@ -64,7 +64,7 @@ def txt_writer(path, fieldnames, data):
             data_str = ""
             for i in range(0, len(fieldnames)):
                 key = row.get(fieldnames[i])
-                # Handle KeyError Exceptions
+                # Handle KeyError Exceptions (key = value or None)
                 if key:
                     data_str = data_str + fieldnames[i] + ' = ' + str(row[fieldnames[i]]) + ', '
                 else:
